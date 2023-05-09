@@ -1,0 +1,27 @@
+<style>
+  .player-div {
+    padding: 15px;
+  }
+  .current {
+    border: solid 2px green;
+  }
+  .folded {
+    background-color: #D3D3D3;
+  }
+</style>
+
+<h1><%=link_to "#{Poker::BAKA} Poker", games_path %></h1>
+
+<%= game_table %>
+
+<%= link_to 'Call', check_call_game_path(@game.db_id) %>
+<%= link_to 'Raise', raise_pot_game_path(@game.db_id) %>
+<%= link_to 'Fold', fold_game_path(@game.db_id) %>
+
+<hr/>
+
+<ul>
+  <li>deck: <%= show_cards(@game.deck.cards) %></li>
+  <li>drawn: <%= show_cards(@game.deck.drawn) %></li>
+  <li>discarded: <%= show_cards(@game.deck.discarded) %></li>
+</ul>

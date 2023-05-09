@@ -1,5 +1,5 @@
 class Poker::Deck
-  attr_accessor :cards
+  attr_accessor :cards, :drawn, :discarded
 
   def initialize(shuffle_deck: true)
     @cards = []
@@ -10,6 +10,7 @@ class Poker::Deck
     end
     shuffle if shuffle_deck
     @drawn = []
+    @discarded = []
   end
 
   def shuffle

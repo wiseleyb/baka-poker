@@ -1,0 +1,50 @@
+<%
+  titles = []
+  cnames = []
+
+  if player_idx == @game.current_player_idx
+    titles << '[C]'
+    cnames << 'current'
+  end
+
+  if player_idx == @game.dealer_idx
+    titles << '[D]'
+    cnames << 'dealer'
+  end
+  if player_idx == @game.small_blind_idx
+    titles << '[S]'
+    cnames << 'small-blind'
+  end
+  if player_idx == @game.big_blind_idx
+    titles << '[B]'
+    cnames << 'big-blind'
+  end
+
+  player = @game.players[player_idx]
+  cnames <<  'folded' if player.folded
+%>
+
+<div class='player-div <%=cnames.join(' ')%>'>
+  <% if player.folded %>
+    <%= small_back_card %>
+    <%= small_back_card %>
+  <% else %>
+    <%= small_card(player.hole_card1) %>
+    <%= small_card(player.hole_card2) %>
+  <% end %>
+  <br/>
+  <table>
+    <tr>
+      <td><%=image_tag(player.image_name, width: 25) %>
+      <td>
+        <%= titles.join %>
+        <%= player.name %>
+        <br/>
+        <%= number_to_currency(player.stack) %>
+        <% if player.folded %>
+          <br/>FOLDED
+        <% end %>
+      </td>
+    </tr>
+  </table>
+</div>

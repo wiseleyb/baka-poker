@@ -1,0 +1,7 @@
+<ul>
+  <li><%=link_to 'new', new_game_path %></li>
+  <li><%=link_to 'reset', reset_games_path %></li>
+  <% @games.each do |g| %>
+    <li><%= link_to g.data.list_to_s, game_path(g.id) %></li>
+  <% end %>
+</ul>
