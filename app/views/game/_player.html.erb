@@ -1,0 +1,27 @@
+<div class='player-div'>
+  <% player = @game.players[player_idx] %>
+  <%= small_card(player.hand.first) %>
+  <%= small_card(player.hand.last) %><br/>
+  <table>
+    <tr>
+      <td><%=image_tag(player.image_name, width: 25) %>
+      <td>
+        <% if player_idx == @game.dealer_idx %>
+          [D]
+        <% end %>
+        <% if player_idx == @game.small_blind_idx %>
+          [S]
+        <% end %>
+        <% if player_idx == @game.big_blind_idx %>
+          [B]
+        <% end %>
+        <% if player_idx == @game.current_player_idx %>
+          [C]
+        <% end %>
+        <%= player.name %>
+        <br/>
+        <%= number_to_currency(player.stack) %>
+      </td>
+    </tr>
+  </table>
+</div>

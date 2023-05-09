@@ -1,0 +1,25 @@
+<table>
+  <tr valign="bottom">
+    <td>&nbsp;</td>
+    <td><%= player(0) %></td>
+    <td><%= player(1) %></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><%= player(5) %></td>
+    <td colspan=2>
+      <% @game.community_cards.each do |c| %>
+        <%= large_card(c) %>
+      <% end %>
+      <br/>
+      Pot: <%= number_to_currency(@game.pot) %>
+    </td>
+    <td><%= player(2) %></td>
+  </tr>
+  <tr valign="top">
+    <td>&nbsp;</td>
+    <td><%= player(4) %></td>
+    <td><%= player(3) %></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
