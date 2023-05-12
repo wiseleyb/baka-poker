@@ -13,7 +13,7 @@ module GameHelper
   end
 
   def player_image(player)
-    image_tag(player.image_name, width: 40, style: 'border-radius: 50%')
+    image_tag(player.image_name, width: 50, style: 'border-radius: 50%')
   end
 
   def player_best_hand(player)
