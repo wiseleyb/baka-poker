@@ -31,4 +31,8 @@ class Poker::Deck
   def to_s
     cards.map(&:to_s).join(' ')
   end
+
+  def to_std
+    cards.map(&:to_std).join(' ')
+  end
 end

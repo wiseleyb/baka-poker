@@ -33,7 +33,7 @@ class Poker::HandRank
 
       # Check for a straight
       if ranks.uniq.length == 5 && (ranks.max - ranks.min) == 4
-        return Poker::rank.new(5, ranks.max, 'straight')
+        return Poker::Rank.new(5, ranks.max, 'straight')
       end
 
       # Check for a three-of-a-kind

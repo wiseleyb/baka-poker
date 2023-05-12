@@ -31,6 +31,13 @@
 <div class='game'>
   <table>
     <tr>
+      <td colspan='2'>
+        <%= link_to 'Call', check_call_game_path(@game.db_id) %>
+        <%= link_to 'Raise', raise_pot_game_path(@game.db_id) %>
+        <%= link_to 'Fold', fold_game_path(@game.db_id) %>
+      </td>
+    </tr>
+    <tr>
       <td>
         <%= game_table %>
       </td>
@@ -41,9 +48,6 @@
   </table>
 </div>
 
-<%= link_to 'Call', check_call_game_path(@game.db_id) %>
-<%= link_to 'Raise', raise_pot_game_path(@game.db_id) %>
-<%= link_to 'Fold', fold_game_path(@game.db_id) %>
 
 <hr/>
 

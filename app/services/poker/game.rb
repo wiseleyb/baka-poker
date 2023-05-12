@@ -3,6 +3,7 @@ class Poker::Game
   include Poker::GameCurrentPlayer
 
   attr_accessor :db_id,
+                :db_game_hand_id,
                 :community_cards,
                 :deck,
                 :players,
@@ -42,8 +43,8 @@ class Poker::Game
 
     # players
     @players = []
-    data[:players].each do |p|
-      player = Poker::Player.new(p[:db_id], p[:name])
+    data[:players].each_with_index do |p, idx|
+      player = Poker::Player.new(p[:db_id], p[:name], idx + 1)
       if (cc = p[:hole_card1]).present?
         player.hole_card1 = Poker::Card.new(cc[:rank], cc[:suit])
       end
@@ -53,6 +54,7 @@ class Poker::Game
       player.stack = p[:stack]
       player.current_bet = p[:current_bet]
       player.folded = p[:folded]
+      player.seat = p[:seat]
       @players << player
     end
 
@@ -63,6 +65,7 @@ class Poker::Game
     @current_player_idx = data[:current_player_idx]
     @current_bet = data[:current_bet]
     @db_id = data[:db_id]
+    @db_game_hand_id = data[:db_game_hand_id]
     @hand_over = data[:hand_over]
   end
 
@@ -70,9 +73,10 @@ class Poker::Game
     pg = Poker::Game.new({}.to_json)
     pg.deck = Poker::Deck.new
     pg.players = []
-    Player.order('random()').limit(player_cnt).each do |p|
+    Player.order('random()').limit(player_cnt).each_with_index do |p, idx|
       pg.players << Poker::Player.new(p.id,
                                       p.name,
+                                      idx + 1,
                                       hole_card1: pg.deck.draw,
                                       hole_card2: pg.deck.draw)
     end
@@ -82,16 +86,53 @@ class Poker::Game
 
     pg.pot = 0
     pg.small_blind = 3
-    pg.pot += pg.small_blind_player.bet!(pg.small_blind)
     pg.big_blind = 5
-    pg.pot += pg.big_blind_player.bet!(pg.big_blind)
-    pg.current_bet = pg.big_blind
     pg.hand_over = false
     g = Game.create
     pg.db_id = g.id
-    g.data = pg
-    g.save
+    pg.db_game_hand_id =
+      GameHand.log("*** #{Poker::BAKA} Poker ***", g.id).id
+    pg.log("Date: #{Time.now}")
+    pg.log("Game: ##{g.id}")
+    pg.log("Hand: ##{pg.db_game_hand_id}")
+    pg.log("Deck: #{pg.deck.to_std}")
+    pg.log('')
+    pg.log('*** Players ***')
+    pg.players.each_with_index do |p, idx|
+      pg.log("Seat-#{idx + 1}: id:#{p.db_id}; "\
+             "name:#{p.name}; "\
+             "stack:#{p.stack}; "\
+             "cards:#{p.hole_cards.map(&:to_std)}")
+    end
+    pg.log('')
+    pg.save!
+    pg.step_post_blinds
     pg
+  end
+
+  def save!
+    g = Game.find(db_id)
+    g.data = self
+    g.save
+  end
+
+  def step_post_blinds
+    self.pot += small_blind_player.bet!(small_blind)
+    self.pot += big_blind_player.bet!(big_blind)
+    self.current_bet = big_blind
+    log('*** Blinds ***')
+    log("Seat-#{small_blind_player.seat}: posts small blind #{small_blind}")
+    log("Seat-#{big_blind_player.seat}: posts big blind #{big_blind}")
+    log('')
+    save!
+  end
+
+  def read_log
+    GameHand.find_by_id(db_game_hand_id).try(&:log)
+  end
+
+  def log(str)
+    GameHand.log(str, db_id, db_game_hand_id)
   end
 
   def small_blind_idx

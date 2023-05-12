@@ -22,7 +22,7 @@ module GameHelper
 
   def player_hand_rank(player)
     res = player.hand_rank(@game.community_cards)
-    "#{res.name}: #{res.score}"
+    "#{res.name}: #{res.score.round(2)}"
   end
 
   def game_table
