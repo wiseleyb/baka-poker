@@ -1,6 +1,7 @@
+# Manages current player methods - included in Poker::Game
 module Poker::GameCurrentPlayer
   def current_player
-    players[current_player_idx]
+    active_players[current_player_idx]
   end
 
   def current_player_last_left?

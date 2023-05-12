@@ -16,7 +16,10 @@
           <%= large_back_card %>
         <% end %>
         <br/>
-        <b><%=@game.stage%></b> Pot: <%= number_to_currency(@game.pot) %>
+        <b><%=@game.stage%></b>
+        Pot: <%= number_to_currency(@game.pot) %>
+        <br/>
+        <i><%= @game.last_player_action %></i>
       </div>
     </td>
     <td><%= player(2) %></td>

@@ -6,9 +6,12 @@ Rails.application.routes.draw do
       get :reset
     end
     member do
-      get :check_call
-      get :fold
-      get :raise_pot
+      get :action_check
+      get :action_fold
+      get :action_bet
+      get :action_call
+      get :action_raise
+      get :next_hand
     end
   end
 

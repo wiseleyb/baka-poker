@@ -1,12 +1,15 @@
 class Poker::Game
   include PokerGameSerializable
   include Poker::GameCurrentPlayer
+  include Poker::GamePlayerActions
+  include Poker::GameSteps
 
   attr_accessor :db_id,
                 :db_game_hand_id,
                 :community_cards,
                 :deck,
                 :players,
+                :current_players,
                 :pot,
                 :dealer_idx,
                 :current_player_idx,
@@ -14,7 +17,8 @@ class Poker::Game
                 :big_blind,
                 :small_blind,
                 :hand_over,
-                :stage
+                :stage,
+                :last_player_action
 
   def initialize(json)
     data = JSON.parse(json)
@@ -69,6 +73,7 @@ class Poker::Game
     @db_game_hand_id = data[:db_game_hand_id]
     @hand_over = data[:hand_over]
     @stage = data[:stage]
+    @last_player_action = data[:last_player_action]
   end
 
   def self.deal!(player_cnt = 6)
@@ -121,21 +126,20 @@ class Poker::Game
     pg
   end
 
+  # Prepares for new hand
+  # * moves blinds
+  # * resets folded players
+  # * resets all in players
+  # * removes players who busted
+  # * resets hand-over
+  # * re-deals
+  def next_hand
+  end
+
   def save!
     g = Game.find(db_id)
     g.data = self
     g.save
-  end
-
-  def step_post_blinds
-    self.pot += small_blind_player.bet!(small_blind)
-    self.pot += big_blind_player.bet!(big_blind)
-    self.current_bet = big_blind
-    log('*** Blinds ***')
-    log("Seat-#{small_blind_player.seat}: posts small blind $#{small_blind}")
-    log("Seat-#{big_blind_player.seat}: posts big blind $#{big_blind}")
-    log('')
-    save!
   end
 
   def read_log
@@ -160,78 +164,21 @@ class Poker::Game
     players[big_blind_idx]
   end
 
+  def active_players
+    @players.select {|p| !p.folded }
+  end
+
   def player_idx(idx)
-    idx >= @players.size ? idx - @players.size : idx
-  end
-
-  def step_next_stage
-    case stage
-    when 'Pre Flop'
-      step_flop
-    when 'Flop'
-      step_turn
-    when 'Turn'
-      step_river
-    when 'River'
-      step_showdown
-    end
-  end
-
-  def step_flop
-    self.stage = 'Flop'
-    self.community_cards ||= []
-    3.times do
-      self.community_cards << deck.draw
-    end
-  end
-
-  def step_turn
-    self.stage = 'Turn'
-    self.community_cards ||= []
-    self.community_cards << deck.draw
-  end
-
-  def step_river
-    self.stage = 'River'
-    self.community_cards ||= []
-    self.community_cards << deck.draw
-  end
-
-  def step_showdown
-    self.stage = 'Showdown'
-  end
-
-  # player checks/bets/folds/etc
-  def player_action(action, amount: nil)
-    case action.to_sym
-    when :fold
-      fold!
-    when :raise
-      raise!(amount)
-    end
-    self.current_player_idx = player_idx(current_player_idx + 1)
-    if current_player_idx == (big_blind_idx + 1)
-      step_next_stage
-    end
-    save!
-  end
-
-  def fold!
-    current_player.folded = true
-    deck.discarded << current_player.hole_card1 if current_player.hole_card1
-    deck.discarded << current_player.hole_card2 if current_player.hole_card2
-    log("Seat-#{current_player.seat}: folds")
-  end
-
-  def raise!(amount)
-    current_player.stack -= amount
-    self.pot += amount
-    log("Seat-#{current_player.seat}: raises $#{amount} to $#{pot}")
+    idx >= active_players.size ? idx - active_players.size : idx
   end
 
   # returns list of ranked players
   def rank_players
     Poker::HandRank.rank_players(self)
+  end
+
+  def player_by_seat(seat_number)
+    players.select {|p| p.seat == seat_number}.first
   end
 
   def to_s

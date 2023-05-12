@@ -32,16 +32,7 @@
 
 <div class='game'>
   <table>
-    <tr>
-      <td>
-        <%= link_to 'Call', check_call_game_path(@game.db_id) %>
-        <%= link_to 'Raise', raise_pot_game_path(@game.db_id) %>
-        <%= link_to 'Fold', fold_game_path(@game.db_id) %>
-      </td>
-      <td>
-        <%=link_to 'reset', reset_games_path %>
-      </td>
-    </tr>
+    <%= render partial: 'actions' %>
     <tr valign="top">
       <td>
         <%= game_table %>
@@ -50,16 +41,14 @@
         <%= game_stats %>
       </td>
     </tr>
+    <%= render partial: 'actions' %>
   </table>
 </div>
 
-
-<hr/>
-
-<ul>
-  <li>deck: <%= show_tiny_cards(@game.deck.cards) %></li>
-  <li>drawn: <%= show_tiny_cards(@game.deck.drawn) %></li>
-  <li>discarded: <%= show_tiny_cards(@game.deck.discarded) %></li>
-</ul>
 <hr/>
 <%=text_area_tag :game_hand, @game.read_log, size: '100x40' %>
+
+<hr/>
+<p><b>Deck:</b><br/><%= show_tiny_cards(@game.deck.cards) %></p>
+<p><b>Drawn:</b><br/><%= show_tiny_cards(@game.deck.drawn) %></p>
+<p><b>Discarded:</b><%= show_tiny_cards(@game.deck.discarded) %></p>

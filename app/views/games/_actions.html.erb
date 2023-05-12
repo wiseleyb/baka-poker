@@ -1,0 +1,13 @@
+<tr>
+  <td>
+    <%= link_to 'Check', action_check_game_path(@game.db_id) %>
+    <%= link_to 'Fold', action_fold_game_path(@game.db_id) %>
+    <%= link_to 'Bet $10', action_bet_game_path(@game.db_id, amount: 10) %>
+    <%= link_to 'Call', action_call_game_path(@game.db_id) %>
+    <%= link_to 'Raise $10', action_raise_game_path(@game.db_id, amount: 10) %>
+  </td>
+  <td>
+    <%=link_to 'Next Hand', next_hand_game_path(@game.db_id) %>
+    <%=link_to 'Reset!', reset_games_path %>
+  </td>
+</tr>

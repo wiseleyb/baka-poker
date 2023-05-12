@@ -20,29 +20,38 @@ class GamesController < ApplicationController
     new
   end
 
-  def check_call
+  def action_check
+    @game.player_action(:check)
+    redirect_to game_path(@game.db_id)
   end
 
-  def fold
+  def action_fold
     @game.player_action(:fold)
-#    update_gamedb
     redirect_to game_path(@game.db_id)
   end
 
-  def raise_pot
-    @game.player_action(:raise, amount: 10)
+  def action_bet
+    @game.player_action(:bet, amount: params[:amount])
     redirect_to game_path(@game.db_id)
+  end
+
+  def action_call
+    @game.player_action(:call)
+    redirect_to game_path(@game.db_id)
+  end
+
+  def action_raise
+    @game.player_action(:raise, amount: params[:amount])
+    redirect_to game_path(@game.db_id)
+  end
+
+  def next_game
+    @game.next_hand
   end
 
   def set_game
     return unless params[:id]
     @gamedb = Game.find_by_id(params[:id])
-    @game = @gamedb.data
-  end
-
-  def update_gamedb
-    @gamedb.data = @game
-    @gamedb.save
     @game = @gamedb.data
   end
 end
