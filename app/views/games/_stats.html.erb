@@ -2,7 +2,3 @@
 <% @game.rank_players.each do |p| %>
   <%= player_deets(p) %>
 <% end %>
-
-<hr/>
-
-<%=text_area_tag :game_hand, @game.read_log, size: '35x10' %>

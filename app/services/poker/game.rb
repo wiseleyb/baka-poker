@@ -70,8 +70,28 @@ class Poker::Game
   end
 
   def self.deal!(player_cnt = 6)
+    g = Game.create
     pg = Poker::Game.new({}.to_json)
     pg.deck = Poker::Deck.new
+    pg.dealer_idx = 0
+    pg.current_player_idx = pg.dealer_idx + 3
+
+    pg.pot = 0
+    pg.small_blind = 3
+    pg.big_blind = 5
+    pg.hand_over = false
+    pg.db_id = g.id
+    pg.db_game_hand_id =
+      GameHand.log("*** #{Poker::BAKA} Poker ***", g.id).id
+    pg.log("Date: #{Time.now}")
+    pg.log("Game: ##{g.id}")
+    pg.log("Hand: ##{pg.db_game_hand_id}")
+    pg.log("Deck: #{pg.deck.to_std}")
+    pg.log("Small Blind: $#{pg.small_blind}")
+    pg.log("Big Blind: $#{pg.big_blind}")
+    pg.log('')
+
+
     pg.players = []
     Player.order('random()').limit(player_cnt).each_with_index do |p, idx|
       pg.players << Poker::Player.new(p.id,
@@ -80,33 +100,21 @@ class Poker::Game
                                       hole_card1: pg.deck.draw,
                                       hole_card2: pg.deck.draw)
     end
-    pg.dealer_idx = 0
-    pg.current_player_idx = pg.dealer_idx + 3
-    pg.community_cards = 5.times.map { pg.deck.draw }
-
-    pg.pot = 0
-    pg.small_blind = 3
-    pg.big_blind = 5
-    pg.hand_over = false
-    g = Game.create
-    pg.db_id = g.id
-    pg.db_game_hand_id =
-      GameHand.log("*** #{Poker::BAKA} Poker ***", g.id).id
-    pg.log("Date: #{Time.now}")
-    pg.log("Game: ##{g.id}")
-    pg.log("Hand: ##{pg.db_game_hand_id}")
-    pg.log("Deck: #{pg.deck.to_std}")
-    pg.log('')
     pg.log('*** Players ***')
     pg.players.each_with_index do |p, idx|
       pg.log("Seat-#{idx + 1}: id:#{p.db_id}; "\
              "name:#{p.name}; "\
-             "stack:#{p.stack}; "\
-             "cards:#{p.hole_cards.map(&:to_std)}")
+             "stack:$#{p.stack}; "\
+             "hole-cards:#{p.hole_cards.map(&:to_std).join(' ')}")
     end
     pg.log('')
+    pg.community_cards = 5.times.map { pg.deck.draw }
     pg.save!
     pg.step_post_blinds
+
+    pg.log('')
+    pg.log('*** Pre Flop ***')
+
     pg
   end
 
@@ -121,8 +129,8 @@ class Poker::Game
     self.pot += big_blind_player.bet!(big_blind)
     self.current_bet = big_blind
     log('*** Blinds ***')
-    log("Seat-#{small_blind_player.seat}: posts small blind #{small_blind}")
-    log("Seat-#{big_blind_player.seat}: posts big blind #{big_blind}")
+    log("Seat-#{small_blind_player.seat}: posts small blind $#{small_blind}")
+    log("Seat-#{big_blind_player.seat}: posts big blind $#{big_blind}")
     log('')
     save!
   end
@@ -157,6 +165,7 @@ class Poker::Game
     current_player.folded = true
     deck.discarded << current_player.hole_card1 if current_player.hole_card1
     deck.discarded << current_player.hole_card2 if current_player.hole_card2
+    log("Seat-#{current_player.seat}: folds")
     self.current_player_idx = player_idx(current_player_idx + 1)
   end
 

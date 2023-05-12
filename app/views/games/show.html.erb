@@ -15,7 +15,9 @@
     background-color: #D3D3D3;
   }
   .game {
+    margin: 0;
     transform: scale(0.75);
+    transform-origin: top left;
   }
   .table {
     padding: 30px;
@@ -26,18 +28,21 @@
 </style>
 
 <h1><%=link_to "#{Poker::BAKA} Poker", games_path %></h1>
-<p><%=link_to 'reset', reset_games_path %></p>
+<hr/>
 
 <div class='game'>
   <table>
     <tr>
-      <td colspan='2'>
+      <td>
         <%= link_to 'Call', check_call_game_path(@game.db_id) %>
         <%= link_to 'Raise', raise_pot_game_path(@game.db_id) %>
         <%= link_to 'Fold', fold_game_path(@game.db_id) %>
       </td>
+      <td>
+        <%=link_to 'reset', reset_games_path %>
+      </td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>
         <%= game_table %>
       </td>
@@ -56,3 +61,5 @@
   <li>drawn: <%= show_tiny_cards(@game.deck.drawn) %></li>
   <li>discarded: <%= show_tiny_cards(@game.deck.discarded) %></li>
 </ul>
+<hr/>
+<%=text_area_tag :game_hand, @game.read_log, size: '100x40' %>
