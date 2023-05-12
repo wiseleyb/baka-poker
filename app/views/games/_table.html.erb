@@ -8,11 +8,13 @@
   <tr>
     <td><%= player(5) %></td>
     <td colspan=2>
-      <% @game.community_cards.each do |c| %>
-        <%= large_card(c) %>
-      <% end %>
-      <br/>
-      Pot: <%= number_to_currency(@game.pot) %>
+      <div class='table'>
+        <% @game.community_cards.each do |c| %>
+          <%= large_card(c) %>
+        <% end %>
+        <br/>
+        Pot: <%= number_to_currency(@game.pot) %>
+      </div>
     </td>
     <td><%= player(2) %></td>
   </tr>

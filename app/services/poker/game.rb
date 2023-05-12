@@ -121,10 +121,7 @@ class Poker::Game
 
   # returns list of ranked players
   def rank_players
-    @players.select {|p| !p.folded}.sort_by do |p|
-      hr = p.hand_rank(community_cards)
-      [hr[0], hr[1]]
-    end.reverse
+    Poker::HandRank.rank_players(self)
   end
 
   def to_s

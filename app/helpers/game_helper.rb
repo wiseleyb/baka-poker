@@ -22,7 +22,7 @@ module GameHelper
 
   def player_hand_rank(player)
     res = player.hand_rank(@game.community_cards)
-    "#{res.last}: (#{res.first}, #{res.second})"
+    "#{res.name}: #{res.score}"
   end
 
   def game_table
@@ -34,15 +34,22 @@ module GameHelper
   end
 
   def small_back_card
-    image_tag('cards/back.png', width: CARD_SMALL_WIDTH, border: 1)
+    card_image('cards/back.png', width: CARD_SMALL_WIDTH)
   end
 
   def small_card(card)
-    image_tag(card.image_name, width: CARD_SMALL_WIDTH, border: 1)
+    card_image(card.image_name, width: CARD_SMALL_WIDTH)
   end
 
   def large_card(card)
-    image_tag(card.image_name, width: CARD_LARGE_WIDTH, border: 1)
+    card_image(card.image_name, width: CARD_LARGE_WIDTH)
+  end
+
+  def card_image(card_image_name, width:)
+    image_tag(card_image_name,
+              width: width,
+              border: 1,
+              style: 'border-radius: 5%')
   end
 
   def show_tiny_cards(cards)
@@ -58,7 +65,7 @@ module GameHelper
   end
 
   def show_cards(cards, width:)
-    cards.map {|c| image_tag(c.image_name, width: width)}.join.html_safe
+    cards.map {|c| card_image(c.image_name, width: width)}.join.html_safe
   end
 
   def show_txt_cards(cards)
