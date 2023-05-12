@@ -1,13 +1,4 @@
 <h3>Player rank</h3>
-<ol>
-  <% @game.rank_players.each do |p| %>
-    <li>
-      <%= player_image(p) %>:
-      <%= show_txt_cards(p.best_hand(@game.community_cards)) %>
-      <br/>
-      <%= p.name %>
-      <br/>
-      <%= p.hand_rank(@game.community_cards) %>
-    </li>
-  <% end %>
-</ol>
+<% @game.rank_players.each do |p| %>
+  <%= player_deets(p) %>
+<% end %>

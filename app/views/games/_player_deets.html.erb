@@ -1,0 +1,21 @@
+<table>
+  <tr valign="top">
+    <td>
+      <%= player_image(player) %>
+    </td>
+    <td>
+      <%= titles %>
+      <%= player.name %>
+      <br/>
+      <% if player.folded %>
+        FOLDED: <%= show_txt_cards(player.hole_cards) %>
+      <% else %>
+        <%= number_to_currency(player.stack) %>
+        <br/>
+        <%= player_best_hand(player) %>
+        <br/>
+        <%= player_hand_rank(player) %>
+      <% end %>
+    </td>
+  </tr>
+</table>

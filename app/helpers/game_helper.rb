@@ -7,8 +7,22 @@ module GameHelper
     render partial: 'player', locals: { player_idx: player_idx }
   end
 
+  def player_deets(player, titles = nil)
+    render partial: 'player_deets',
+           locals: { player: player, titles: titles }
+  end
+
   def player_image(player)
-    image_tag(player.image_name, width: 20)
+    image_tag(player.image_name, width: 40, style: 'border-radius: 50%')
+  end
+
+  def player_best_hand(player)
+    show_txt_cards(player.best_hand(@game.community_cards))
+  end
+
+  def player_hand_rank(player)
+    res = player.hand_rank(@game.community_cards)
+    "#{res.last}: (#{res.first}, #{res.second})"
   end
 
   def game_table

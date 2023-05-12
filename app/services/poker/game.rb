@@ -1,5 +1,6 @@
 class Poker::Game
   include PokerGameSerializable
+  include Poker::GameCurrentPlayer
 
   attr_accessor :db_id,
                 :community_cards,
@@ -107,10 +108,6 @@ class Poker::Game
     players[big_blind_idx]
   end
 
-  def current_player
-    players[current_player_idx]
-  end
-
   def player_idx(idx)
     idx >= @players.size ? idx - @players.size : idx
   end
@@ -120,17 +117,6 @@ class Poker::Game
     deck.discarded << current_player.hole_card1 if current_player.hole_card1
     deck.discarded << current_player.hole_card2 if current_player.hole_card2
     self.current_player_idx = player_idx(current_player_idx + 1)
-  end
-
-  def current_player_last_left?
-    return false if current_player.folded
-    if players.select {|p| p.folded == true}.size == players.size - 1
-      current_player.stack += pot
-      self.pot = 0
-      self.hand_over = true
-      return true
-    end
-    false
   end
 
   # returns list of ranked players

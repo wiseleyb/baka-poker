@@ -33,24 +33,5 @@
     <%= small_card(player.hole_card2) %>
   <% end %>
   <br/>
-  <table>
-    <tr>
-      <td><%=image_tag(player.image_name, width: 25) %>
-      <td>
-        <%= titles.join %>
-        <%= player.name %>
-        <br/><%= number_to_currency(player.stack) %>
-        <% if player.folded %>
-          <br/>
-          FOLDED: <%= show_txt_cards(player.hole_cards) %>
-        <% else %>
-          <br/>
-          <%= show_txt_cards(player.best_hand(@game.community_cards)) %>
-          <br/>
-          <%= player.hand_rank(@game.community_cards) %>
-          <br/>
-        <% end %>
-      </td>
-    </tr>
-  </table>
+  <%= player_deets(player, titles.join) %>
 </div>
