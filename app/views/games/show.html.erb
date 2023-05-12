@@ -11,8 +11,18 @@
 </style>
 
 <h1><%=link_to "#{Poker::BAKA} Poker", games_path %></h1>
+<p><%=link_to 'reset', reset_games_path %></p>
 
-<%= game_table %>
+<table>
+  <tr>
+    <td>
+      <%= game_table %>
+    </td>
+    <td>
+      <%= game_stats %>
+    </td>
+  </tr>
+</table>
 
 <%= link_to 'Call', check_call_game_path(@game.db_id) %>
 <%= link_to 'Raise', raise_pot_game_path(@game.db_id) %>

@@ -119,8 +119,6 @@ class Poker::Game
     current_player.folded = true
     deck.discarded << current_player.hole_card1 if current_player.hole_card1
     deck.discarded << current_player.hole_card2 if current_player.hole_card2
-    # current_player.hole_card1 = nil
-    # current_player.hole_card2 = nil
     self.current_player_idx = player_idx(current_player_idx + 1)
   end
 
@@ -133,6 +131,14 @@ class Poker::Game
       return true
     end
     false
+  end
+
+  # returns list of ranked players
+  def rank_players
+    @players.select {|p| !p.folded}.sort_by do |p|
+      hr = p.hand_rank(community_cards)
+      [hr[0], hr[1]]
+    end.reverse
   end
 
   def to_s

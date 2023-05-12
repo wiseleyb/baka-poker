@@ -7,8 +7,16 @@ module GameHelper
     render partial: 'player', locals: { player_idx: player_idx }
   end
 
+  def player_image(player)
+    image_tag(player.image_name, width: 20)
+  end
+
   def game_table
     render partial: 'table'
+  end
+
+  def game_stats
+    render partial: 'stats'
   end
 
   def small_back_card
