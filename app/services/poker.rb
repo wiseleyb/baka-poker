@@ -2,11 +2,19 @@ module Poker
   RANKS = %w(2 3 4 5 6 7 8 9 T J Q K A)
   RANK_NAMES = %w(2 3 4 5 6 7 8 9 10 jack queen king ace)
 
+=begin
   SUITS = {
     c: '♧',
     d: '♢',
     h: '♡',
     s: '♤'
+  }
+=end
+  SUITS = {
+    c: '♣️',
+    d: '♦️',
+    h: '♥️',
+    s: '♠️'
   }
 
   SUIT_NAMES = {
