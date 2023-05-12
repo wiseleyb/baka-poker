@@ -40,6 +40,10 @@
         <%= titles.join %>
         <%= player.name %>
         <br/>
+        <%= show_txt_cards(player.best_hand(@game.community_cards)) %>
+        <br/>
+        <%= player.hand_rank(@game.community_cards) %>
+        <br/>
         <%= number_to_currency(player.stack) %>
         <% if player.folded %>
           <br/>FOLDED

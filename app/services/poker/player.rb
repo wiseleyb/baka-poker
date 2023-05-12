@@ -39,6 +39,18 @@ class Poker::Player
     "players/#{img}.jpeg"
   end
 
+  def best_hand(community_cards)
+    pcards = [hole_card1, hole_card2, community_cards].flatten
+    cards = Poker::Card.cards_to_std_array(pcards)
+    Poker::Card.std_array_to_cards(Poker::HandRank.best_poker_hand(cards))
+  end
+
+  def hand_rank(community_cards)
+    bh = best_hand(community_cards)
+    cards = Poker::Card.cards_to_std_array(bh)
+    Poker::HandRank.rank_hand(cards)
+  end
+
   def to_s
     "#{name}: #{hole_card1.to_s}#{hole_card2.to_s}"
   end

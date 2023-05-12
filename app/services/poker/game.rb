@@ -112,9 +112,7 @@ class Poker::Game
   end
 
   def player_idx(idx)
-    res = idx >= @players.size ? idx - @players.size : idx
-    puts "idx: #{res}"
-    res
+    idx >= @players.size ? idx - @players.size : idx
   end
 
   def fold!
