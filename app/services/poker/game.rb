@@ -13,7 +13,8 @@ class Poker::Game
                 :current_bet,
                 :big_blind,
                 :small_blind,
-                :hand_over
+                :hand_over,
+                :stage
 
   def initialize(json)
     data = JSON.parse(json)
@@ -22,7 +23,7 @@ class Poker::Game
 
     # cards
     @community_cards = []
-    data[:community_cards].each do |cc|
+    (data[:community_cards] || []).each do |cc|
       @community_cards << Poker::Card.new(cc[:rank], cc[:suit])
     end
 
@@ -67,6 +68,7 @@ class Poker::Game
     @db_id = data[:db_id]
     @db_game_hand_id = data[:db_game_hand_id]
     @hand_over = data[:hand_over]
+    @stage = data[:stage]
   end
 
   def self.deal!(player_cnt = 6)
@@ -79,6 +81,7 @@ class Poker::Game
     pg.pot = 0
     pg.small_blind = 3
     pg.big_blind = 5
+    pg.stage = 'Pre Flop'
     pg.hand_over = false
     pg.db_id = g.id
     pg.db_game_hand_id =
@@ -107,8 +110,8 @@ class Poker::Game
              "stack:$#{p.stack}; "\
              "hole-cards:#{p.hole_cards.map(&:to_std).join(' ')}")
     end
-    pg.log('')
-    pg.community_cards = 5.times.map { pg.deck.draw }
+
+    # pg.community_cards = 5.times.map { pg.deck.draw }
     pg.save!
     pg.step_post_blinds
 
@@ -161,12 +164,69 @@ class Poker::Game
     idx >= @players.size ? idx - @players.size : idx
   end
 
+  def step_next_stage
+    case stage
+    when 'Pre Flop'
+      step_flop
+    when 'Flop'
+      step_turn
+    when 'Turn'
+      step_river
+    when 'River'
+      step_showdown
+    end
+  end
+
+  def step_flop
+    self.stage = 'Flop'
+    self.community_cards ||= []
+    3.times do
+      self.community_cards << deck.draw
+    end
+  end
+
+  def step_turn
+    self.stage = 'Turn'
+    self.community_cards ||= []
+    self.community_cards << deck.draw
+  end
+
+  def step_river
+    self.stage = 'River'
+    self.community_cards ||= []
+    self.community_cards << deck.draw
+  end
+
+  def step_showdown
+    self.stage = 'Showdown'
+  end
+
+  # player checks/bets/folds/etc
+  def player_action(action, amount: nil)
+    case action.to_sym
+    when :fold
+      fold!
+    when :raise
+      raise!(amount)
+    end
+    self.current_player_idx = player_idx(current_player_idx + 1)
+    if current_player_idx == (big_blind_idx + 1)
+      step_next_stage
+    end
+    save!
+  end
+
   def fold!
     current_player.folded = true
     deck.discarded << current_player.hole_card1 if current_player.hole_card1
     deck.discarded << current_player.hole_card2 if current_player.hole_card2
     log("Seat-#{current_player.seat}: folds")
-    self.current_player_idx = player_idx(current_player_idx + 1)
+  end
+
+  def raise!(amount)
+    current_player.stack -= amount
+    self.pot += amount
+    log("Seat-#{current_player.seat}: raises $#{amount} to $#{pot}")
   end
 
   # returns list of ranked players

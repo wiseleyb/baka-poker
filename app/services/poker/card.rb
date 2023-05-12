@@ -30,11 +30,13 @@ class Poker::Card
 
   # converts from Poker::Card -> standard poker notation like: 2h
   def self.cards_to_std_array(cards)
+    return [] unless cards
     cards.map(&:to_std)
   end
 
   # converts standard poker notiation array to Poker::Cards
   def self.std_array_to_cards(std_cards)
+    return [] unless std_cards
     std_cards.map {|c| Poker::Card.new(c[0], c[1])}
   end
 end

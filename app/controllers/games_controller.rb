@@ -24,12 +24,14 @@ class GamesController < ApplicationController
   end
 
   def fold
-    @game.fold!
-    update_gamedb
+    @game.player_action(:fold)
+#    update_gamedb
     redirect_to game_path(@game.db_id)
   end
 
   def raise_pot
+    @game.player_action(:raise, amount: 10)
+    redirect_to game_path(@game.db_id)
   end
 
   def set_game

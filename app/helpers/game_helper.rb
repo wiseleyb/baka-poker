@@ -41,6 +41,10 @@ module GameHelper
     card_image(card.image_name, width: CARD_SMALL_WIDTH)
   end
 
+  def large_back_card
+    card_image('cards/back.png', width: CARD_LARGE_WIDTH)
+  end
+
   def large_card(card)
     card_image(card.image_name, width: CARD_LARGE_WIDTH)
   end

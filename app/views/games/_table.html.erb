@@ -12,8 +12,11 @@
         <% @game.community_cards.each do |c| %>
           <%= large_card(c) %>
         <% end %>
+        <% (5 - @game.community_cards.size).times do %>
+          <%= large_back_card %>
+        <% end %>
         <br/>
-        Pot: <%= number_to_currency(@game.pot) %>
+        <b><%=@game.stage%></b> Pot: <%= number_to_currency(@game.pot) %>
       </div>
     </td>
     <td><%= player(2) %></td>
