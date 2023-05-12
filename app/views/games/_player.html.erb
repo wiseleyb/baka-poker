@@ -39,14 +39,16 @@
       <td>
         <%= titles.join %>
         <%= player.name %>
-        <br/>
-        <%= show_txt_cards(player.best_hand(@game.community_cards)) %>
-        <br/>
-        <%= player.hand_rank(@game.community_cards) %>
-        <br/>
-        <%= number_to_currency(player.stack) %>
+        <br/><%= number_to_currency(player.stack) %>
         <% if player.folded %>
-          <br/>FOLDED
+          <br/>
+          FOLDED: <%= show_txt_cards(player.hole_cards) %>
+        <% else %>
+          <br/>
+          <%= show_txt_cards(player.best_hand(@game.community_cards)) %>
+          <br/>
+          <%= player.hand_rank(@game.community_cards) %>
+          <br/>
         <% end %>
       </td>
     </tr>

@@ -19,6 +19,10 @@ class Poker::Player
     @folded = false
   end
 
+  def hole_cards
+    [hole_card1, hole_card2]
+  end
+
   def bet!(amount)
     return 0 unless stack
     self.stack -= amount
@@ -40,7 +44,7 @@ class Poker::Player
   end
 
   def best_hand(community_cards)
-    pcards = [hole_card1, hole_card2, community_cards].flatten
+    pcards = [hole_cards, community_cards].flatten
     cards = Poker::Card.cards_to_std_array(pcards)
     Poker::Card.std_array_to_cards(Poker::HandRank.best_poker_hand(cards))
   end
