@@ -7,15 +7,21 @@
       <%= titles %>
       <%= player.name %>
       <br/>Seat #<%=player.seat%>
-      <br/>
       <% if player.folded %>
+        <br/>
         FOLDED: <%= show_txt_cards(player.hole_cards) %>
       <% else %>
-        <%= number_to_currency(player.stack) %>
-        <br/>
-        <%= player_best_hand(player) %>
-        <br/>
-        <%= player_hand_rank(player) %>
+        <br/><%= fmt_money(player.stack) %>
+        <% unless (pbh = player_best_hand(player)).blank? %>
+          <br/><%= pbh %>
+        <% end %>
+        <br/><%= player_hand_rank(player) %>
+        <% if player.last_action.present? %>
+          <br/><i><%=player.last_action%></i>
+        <% end %>
+        <% if player.current_bet %>
+          <br/>Current Bet: <%=fmt_money(player.current_bet)%>
+        <% end %>
       <% end %>
     </td>
   </tr>

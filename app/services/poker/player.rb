@@ -1,24 +1,25 @@
 class Poker::Player
-  attr_accessor :db_id,
-                :name,
+  attr_accessor :current_bet,
+                :db_id,
+                :folded,
                 :hole_card1,
                 :hole_card2,
-                :stack,
-                :current_bet,
-                :folded,
-                :seat
+                :last_action,
+                :name,
+                :seat,
+                :stack
 
   # name: player name
   # hole_cards: Poker::HoleCards
   def initialize(db_id, name, seat, hole_card1: nil, hole_card2: nil)
+    @current_bet = 0
     @db_id = db_id
-    @name = name
+    @folded = false
     @hole_card1 = hole_card1
     @hole_card2 = hole_card2
-    @stack = 1_000
-    @current_bet = 0
-    @folded = false
+    @name = name
     @seat = seat
+    @stack = 1_000
   end
 
   def hole_cards
@@ -30,6 +31,10 @@ class Poker::Player
     self.stack -= amount
     self.current_bet += amount
     amount
+  end
+
+  def all_in?
+    stack.to_i <= 0
   end
 
   def fold!

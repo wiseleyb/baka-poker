@@ -3,6 +3,11 @@ module GameHelper
   CARD_SMALL_WIDTH = 70
   CARD_LARGE_WIDTH = 100
 
+  def fmt_money(amount)
+    "$#{amount}"
+  end
+  module_function :fmt_money # allows use of this outside of views
+
   def player(player_idx)
     render partial: 'player', locals: { player_idx: player_idx }
   end

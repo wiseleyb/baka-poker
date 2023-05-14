@@ -4,14 +4,11 @@ Rails.application.routes.draw do
   resources :games do
     collection do
       get :reset
+      post :reset
     end
     member do
-      get :action_check
-      get :action_fold
-      get :action_bet
-      get :action_call
-      get :action_raise
-      get :next_hand
+      post :player_action
+      post :next_hand
     end
   end
 

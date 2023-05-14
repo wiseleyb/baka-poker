@@ -13,3 +13,36 @@
  *= require_tree .
  *= require_self
  */
+
+.player-div {
+  padding: 15px;
+  border: solid 2px black;
+  border-radius: 10%;
+  height: 220px;
+  width: 200px;
+}
+.current {
+  border: solid 4px green;
+  background-color: #EAFAF1;
+  border-radius: 10%;
+}
+.folded {
+  background-color: #D3D3D3;
+}
+.all-in {
+  background-color: #AED6F1;
+}
+.game {
+  margin: 0;
+  transform: scale(0.75);
+  transform-origin: top left;
+}
+.table {
+  padding: 30px;
+  margin: 10px;
+  border: solid 2px black;
+  border-radius: 10%;
+}
+.player-actions-list li {
+  display: inline-block;
+}

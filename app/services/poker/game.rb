@@ -1,24 +1,27 @@
 class Poker::Game
   include PokerGameSerializable
-  include Poker::GameCurrentPlayer
+  include Poker::GamePlayers
   include Poker::GamePlayerActions
   include Poker::GameSteps
 
-  attr_accessor :db_id,
-                :db_game_hand_id,
+  attr_accessor :big_blind,
                 :community_cards,
-                :deck,
-                :players,
-                :current_players,
-                :pot,
-                :dealer_idx,
-                :current_player_idx,
                 :current_bet,
-                :big_blind,
-                :small_blind,
+                :current_player_idx,
+                :current_players,
+                :db_game_hand_id,
+                :db_id,
+                :dealer_idx,
+                :deck,
                 :hand_over,
-                :stage,
-                :last_player_action
+                :last_player_action,
+                :last_player_idx_to_bet,
+                :player_action_cnt,
+                :player_total_action_cnt,
+                :players,
+                :pot,
+                :small_blind,
+                :stage
 
   def initialize(json)
     data = JSON.parse(json)
@@ -58,22 +61,26 @@ class Poker::Game
       end
       player.stack = p[:stack]
       player.current_bet = p[:current_bet]
-      player.folded = p[:folded]
+      player.folded = p[:folded].to_bool
       player.seat = p[:seat]
+      player.last_action = p[:last_action]
       @players << player
     end
 
     @big_blind = data[:big_blind].to_i
-    @small_blind = data[:small_blind].to_i
-    @pot = data[:pot]
-    @dealer_idx = data[:dealer_idx]
-    @current_player_idx = data[:current_player_idx]
     @current_bet = data[:current_bet]
-    @db_id = data[:db_id]
+    @current_player_idx = data[:current_player_idx]
     @db_game_hand_id = data[:db_game_hand_id]
-    @hand_over = data[:hand_over]
-    @stage = data[:stage]
+    @db_id = data[:db_id]
+    @dealer_idx = data[:dealer_idx]
+    @hand_over = data[:hand_over].to_bool
     @last_player_action = data[:last_player_action]
+    @last_player_idx_to_bet = data[:last_player_idx_to_bet].to_i
+    @player_action_cnt = data[:player_action_cnt].to_i
+    @player_total_action_cnt = data[:player_total_action_cnt].to_i
+    @pot = data[:pot]
+    @small_blind = data[:small_blind].to_i
+    @stage = data[:stage]
   end
 
   def self.deal!(player_cnt = 6)
@@ -116,12 +123,15 @@ class Poker::Game
              "hole-cards:#{p.hole_cards.map(&:to_std).join(' ')}")
     end
 
-    # pg.community_cards = 5.times.map { pg.deck.draw }
+    pg.player_action_cnt = 0
+    pg.player_total_action_cnt = pg.players.size
+
     pg.save!
     pg.step_post_blinds
 
     pg.log('')
     pg.log('*** Pre Flop ***')
+    pg.save!
 
     pg
   end
@@ -135,6 +145,19 @@ class Poker::Game
   # * re-deals
   def next_hand
   end
+
+  def hand_over?
+    raise 'todo'
+    return false if current_player.folded
+    if players.select {|p| p.folded && !p.all_in?}.size == players.size - 1
+      current_player.stack += pot
+      self.pot = 0
+      self.hand_over = true
+      return true
+    end
+    false
+  end
+
 
   def save!
     g = Game.find(db_id)
@@ -150,35 +173,9 @@ class Poker::Game
     GameHand.log(str, db_id, db_game_hand_id)
   end
 
-  def small_blind_idx
-    player_idx(dealer_idx + 1)
-  end
-  def small_blind_player
-    players[small_blind_idx]
-  end
-
-  def big_blind_idx
-    player_idx(dealer_idx + 2)
-  end
-  def big_blind_player
-    players[big_blind_idx]
-  end
-
-  def active_players
-    @players.select {|p| !p.folded }
-  end
-
-  def player_idx(idx)
-    idx >= active_players.size ? idx - active_players.size : idx
-  end
-
   # returns list of ranked players
   def rank_players
     Poker::HandRank.rank_players(self)
-  end
-
-  def player_by_seat(seat_number)
-    players.select {|p| p.seat == seat_number}.first
   end
 
   def to_s
@@ -193,7 +190,7 @@ class Poker::Game
     res = []
     res << "#{db_id}: "
     res << community_cards.map(&:to_s).join('&nbsp;')
-    res << ApplicationController.helpers.number_to_currency(pot)
+    res << GameHelper.fmt_money(pot)
     res.join('&nbsp;').html_safe
   end
 end

@@ -7,7 +7,6 @@ class GamesController < ApplicationController
 
   # sets gamedb and game in set_game filter
   def show
-    @game.current_player_last_left?
   end
 
   def new
@@ -20,28 +19,8 @@ class GamesController < ApplicationController
     new
   end
 
-  def action_check
-    @game.player_action(:check)
-    redirect_to game_path(@game.db_id)
-  end
-
-  def action_fold
-    @game.player_action(:fold)
-    redirect_to game_path(@game.db_id)
-  end
-
-  def action_bet
-    @game.player_action(:bet, amount: params[:amount])
-    redirect_to game_path(@game.db_id)
-  end
-
-  def action_call
-    @game.player_action(:call)
-    redirect_to game_path(@game.db_id)
-  end
-
-  def action_raise
-    @game.player_action(:raise, amount: params[:amount])
+  def player_action
+    @game.player_action(params[:player_action], amount: params[:amount].to_i)
     redirect_to game_path(@game.db_id)
   end
 

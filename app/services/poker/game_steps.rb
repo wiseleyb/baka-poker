@@ -1,5 +1,15 @@
 # Manages steps: post blinds, pre-flop, flop, etc
 module Poker::GameSteps
+  def move_to_next_stage?
+    #if current_bet == 0 || (players.length - folded_players.length) == 1 || (player == last_to_bet && action == 'c')
+    if (current_bet == 0 || current_player.current_bet == current_bet) &&
+       player_action_cnt == player_total_action_cnt
+      step_next_stage
+      return true
+    end
+    false
+  end
+
   def step_next_stage
     case stage
     when 'Post Blinds'
@@ -13,17 +23,27 @@ module Poker::GameSteps
     when 'River'
       step_showdown
     end
+    step_reset_betting_round
+    save!
+  end
+
+  def step_reset_betting_round
+    self.player_action_cnt = 0
+    self.player_total_action_cnt = active_players.size
   end
 
   def step_post_blinds
     self.pot += small_blind_player.bet!(small_blind)
+    small_blind_player.last_action = "posts small blind $#{small_blind}"
+
     self.pot += big_blind_player.bet!(big_blind)
+    big_blind_player.last_action = "posts big blind $#{big_blind}"
+
     self.current_bet = big_blind
     log('*** Blinds ***')
     log("Seat-#{small_blind_player.seat}: posts small blind $#{small_blind}")
     log("Seat-#{big_blind_player.seat}: posts big blind $#{big_blind}")
     log('')
-    save!
   end
 
   def step_flop

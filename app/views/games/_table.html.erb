@@ -17,9 +17,13 @@
         <% end %>
         <br/>
         <b><%=@game.stage%></b>
-        Pot: <%= number_to_currency(@game.pot) %>
+        Pot: <%= fmt_money(@game.pot) %>
+        Bet: <%= fmt_money(@game.current_bet) %>
         <br/>
         <i><%= @game.last_player_action %></i>
+
+        <br/>player_action_cnt: <%= @game.player_action_cnt %>
+        <br/>player_total_action_cnt: <%= @game.player_total_action_cnt %>
       </div>
     </td>
     <td><%= player(2) %></td>

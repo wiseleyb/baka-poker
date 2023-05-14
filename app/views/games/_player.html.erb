@@ -21,7 +21,8 @@
   end
 
   player = @game.players[player_idx]
-  cnames <<  'folded' if player.folded
+  cnames << 'folded' if player.folded
+  # cnames << 'all-in' if player.all_in?
 %>
 
 <div class='player-div <%=cnames.join(' ')%>'>
