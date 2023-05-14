@@ -64,7 +64,8 @@ module Poker::GamePlayers
     current_bet - current_player.current_bet
   end
 
-#  def player_by_seat(seat_number)
-#    players.select {|p| p.seat == seat_number}.first
-#  end
+  # returns list of ranked players
+  def rank_players
+    Poker::HandRank.rank_players(self)
+  end
 end

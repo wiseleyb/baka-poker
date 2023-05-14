@@ -6,12 +6,18 @@ class Poker::Player
                 :hole_card2,
                 :last_action,
                 :name,
+                :slug,
                 :seat,
                 :stack
 
   # name: player name
   # hole_cards: Poker::HoleCards
-  def initialize(db_id, name, seat, hole_card1: nil, hole_card2: nil)
+  def initialize(db_id,
+                 name,
+                 seat = nil,
+                 hole_card1: nil,
+                 hole_card2: nil,
+                 stack: 500 + rand(500))
     @current_bet = 0
     @db_id = db_id
     @folded = false
@@ -19,7 +25,8 @@ class Poker::Player
     @hole_card2 = hole_card2
     @name = name
     @seat = seat
-    @stack = 1_000
+    @slug = name.slugify
+    @stack = stack
   end
 
   def hole_cards

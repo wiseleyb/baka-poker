@@ -64,6 +64,7 @@ class Poker::Game
       player.folded = p[:folded].to_bool
       player.seat = p[:seat]
       player.last_action = p[:last_action]
+      player.slug = p[:slug]
       @players << player
     end
 
@@ -119,6 +120,7 @@ class Poker::Game
     pg.players.each_with_index do |p, idx|
       pg.log("Seat-#{idx + 1}: id:#{p.db_id}; "\
              "name:#{p.name}; "\
+             "slug:#{p.slug}; "\
              "stack:$#{p.stack}; "\
              "hole-cards:#{p.hole_cards.map(&:to_std).join(' ')}")
     end
@@ -171,11 +173,6 @@ class Poker::Game
 
   def log(str)
     GameHand.log(str, db_id, db_game_hand_id)
-  end
-
-  # returns list of ranked players
-  def rank_players
-    Poker::HandRank.rank_players(self)
   end
 
   def to_s

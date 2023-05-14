@@ -22,6 +22,8 @@ module Poker::GameSteps
       step_river
     when 'River'
       step_showdown
+    when 'Showdown'
+      step_end_hand
     end
     step_reset_betting_round
     save!
@@ -76,5 +78,10 @@ module Poker::GameSteps
     self.stage = 'Showdown'
     log('')
     log('*** River ***')
+  end
+
+  def step_end_hand
+    self.stage = 'Over'
+
   end
 end

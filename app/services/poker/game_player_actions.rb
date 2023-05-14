@@ -20,23 +20,19 @@ module Poker::GamePlayerActions
       raise "Poker::GameActions: Unknown action:#{action}"
     end
     next_player
-#    last_player?
-    #if current_player_idx == (big_blind_idx + 1)
-    #  step_next_stage
-    #end
     move_to_next_stage?
     save!
   end
 
   def action_check
-    action_log("Seat-##{current_player.seat}: checks")
+    action_log('checks')
   end
 
   def action_fold
     current_player.folded = true
     deck.discarded << current_player.hole_card1 if current_player.hole_card1
     deck.discarded << current_player.hole_card2 if current_player.hole_card2
-    action_log("Seat-##{current_player.seat}: folds")
+    action_log('folds')
   end
 
   def action_bet(amount)
@@ -47,8 +43,8 @@ module Poker::GamePlayerActions
     amt = cp_call_amt.to_i
     current_player.bet!(amt)
     self.pot += amt
-    action_log("Seat-##{current_player.seat}: "\
-               "calls $#{amt} to $#{pot}")
+    action_log("calls #{GameHelper.fmt_money(amt)} to "\
+               "#{GameHelper.fmt_money(pot)}")
   end
 
   def action_raise(amount)
@@ -61,8 +57,8 @@ module Poker::GamePlayerActions
     self.pot += amount
     self.current_bet += amount
     self.last_player_idx_to_bet = current_player_idx
-    action_log("Seat-##{current_player.seat}: "\
-               "#{action_type}s  $#{amount} to $#{pot}")
+    action_log("#{action_type}s  #{GameHelper.fmt_money(amount)} to "\
+               "#{GameHelper.fmt_money(pot)}")
   end
 
   def action_all_in
@@ -70,12 +66,12 @@ module Poker::GamePlayerActions
     self.current_bet = amount - current_bet if amount > current_bet
     self.pot += amount
     current_player.bet!(amount)
-    action_log("Seat-##{current_player.seat}: all-in")
+    action_log('all-in')
   end
 
   def action_log(logmsg)
     self.last_player_action = logmsg
-    current_player.last_action = logmsg.split(': ')[1..-1].join
-    log(logmsg)
+    current_player.last_action = logmsg
+    log("Seat ##{current_player.seat}: #{current_player.slug} #{logmsg}")
   end
 end
