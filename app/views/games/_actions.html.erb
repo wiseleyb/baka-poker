@@ -5,6 +5,9 @@
 <tr>
   <td>
     <ul class='player-actions-list'>
+      <li class='game-home-link'>
+        <%=link_to "#{Poker::BAKA} Poker", games_path %>
+      </li>
       <li>
         <% if @game.cp_can_check? %>
         <%= button_to 'Check',

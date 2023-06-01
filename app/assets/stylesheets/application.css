@@ -37,6 +37,11 @@
   transform: scale(0.75);
   transform-origin: top left;
 }
+.game-home-link {
+  font-size: larger;
+  font-weight: bold;
+  margin-right: 50px;
+}
 .table {
   padding: 30px;
   margin: 10px;
