@@ -83,5 +83,66 @@ module Poker::GameSteps
   def step_end_hand
     self.stage = 'Over'
 
+    # Calculate each player's best hand using their hole cards and the
+    # community cards
+    players_hash = {}
+    player_scores = {}
+    players.each do |p|
+      phash[p.slug] = p
+      player_scores[p.slug] = p.hand_rank(community_cards)
+    end
+
+    # Determine the winning hand(s)
+    winning_score = player_scores.values.max
+    winning_players =
+      player_scores.select {|slug, score| score = winning_score }.keys
+
+    # Divide the pot among the winning player(s)
+    pot_size = pot
+    side_pots = []
+    current_pot = pot_size
+
+    while winning_players.any?
+      # Determine the set of players who are all-in
+      all_in_players = players_hash.select {|slug, player| current_pot >  phash}.keys
+
+      # Determine the minimum bet that all all-in players can match
+      min_all_in_bet = all_in_players.map {|player| current_pot - players[player].length }.min
+
+      # Determine the set of players who have contributed to this pot
+      contributing_players = players.select {|player, hole_cards| hole_cards.length >= min_all_in_bet }.keys
+
+      # Calculate the size of this pot and remove it from the main pot
+      pot_size = contributing_players.length * min_all_in_bet
+      current_pot -= pot_size
+
+      # Calculate the winning hand(s) for this pot
+      pot_hands = player_hands.select {|player, hand| contributing_players.include?(player) }
+      pot_winning_hand = pot_hands.values.max
+      pot_winning_players = pot_hands.select {|player, hand| hand == pot_winning_hand }.keys
+
+      # Divide this pot among the winning player(s) and remove them from the list of winners
+      if pot_winning_players.length == 1
+        # Single winner, award entire pot
+        winning_player = pot_winning_players.first
+        side_pots << {winning_player => pot_size}
+      else
+        # Split pot among winners
+        winnings_per_player = pot_size / pot_winning_players.length
+        pot_winning_players.each do |player|
+          side_pots << {player => winnings_per_player}
+        end
+      end
+      winning_players -= pot_winning_players
+    end
+
+    # Print the results for each side pot
+    side_pots.each_with_index do |pot, i|
+      puts "Side pot #{i+1}:"
+      pot.each do |player, winnings|
+        puts "#{player} wins #{winnings} chips with #{Hand.new(player_hands[player]).name}."
+      end
+    end
+
   end
 end

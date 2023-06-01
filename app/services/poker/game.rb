@@ -59,12 +59,12 @@ class Poker::Game
       if (cc = p[:hole_card2]).present?
         player.hole_card2 = Poker::Card.new(cc[:rank], cc[:suit])
       end
-      player.stack = p[:stack]
-      player.current_bet = p[:current_bet]
+      player.current_bet = p[:current_bet].to_i
       player.folded = p[:folded].to_bool
-      player.seat = p[:seat]
       player.last_action = p[:last_action]
+      player.seat = p[:seat]
       player.slug = p[:slug]
+      player.stack = p[:stack]
       @players << player
     end
 

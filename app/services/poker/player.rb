@@ -37,6 +37,7 @@ class Poker::Player
     return 0 unless stack
     self.stack -= amount
     self.current_bet += amount
+    self.total_bet += amount
     amount
   end
 
