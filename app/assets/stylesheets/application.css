@@ -58,8 +58,17 @@
   border: solid 2px black;
   border-radius: 10%;
 }
-.player-actions-list li {
+.player-actions-list, 
+.player-deets-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
   /*
   display: inline-block;
   */
+}
+.player-hand-ranking {
+  padding: 5px;
+  margin: 0;
 }

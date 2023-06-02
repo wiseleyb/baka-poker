@@ -1,4 +1,12 @@
 <h3>Player hand rank</h3>
-<% @game.rank_players.each do |p| %>
-  <%= p %>
-<% end %>
+<ol class='player-hand-ranking'>
+  <% @game.rank_players.each do |p| %>
+    <li>
+      <%= p %>
+      <% unless (pbh = player_best_hand(p)).blank? %>
+        <br/>(<%= pbh %>)
+        <br/><%= player_hand_rank(p) %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
