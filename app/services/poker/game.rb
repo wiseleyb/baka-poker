@@ -160,6 +160,35 @@ class Poker::Game
     false
   end
 
+  # figures out player titles and css names
+  # returns [titles, css_names] both arrays
+  def get_titles(player_idx)
+    titles = []
+    cnames = []
+
+    if player_idx == current_player_idx
+      titles << '[C]'
+      cnames << 'current'
+    end
+
+    if player_idx == dealer_idx
+      titles << '[D]'
+      cnames << 'dealer'
+    end
+    if player_idx == small_blind_idx
+      titles << '[S]'
+      cnames << 'small-blind'
+    end
+    if player_idx == big_blind_idx
+      titles << '[B]'
+      cnames << 'big-blind'
+    end
+
+    cnames << 'folded' if players[player_idx].folded
+
+    # cnames << 'all-in' if player.all_in?
+    [titles, cnames]
+  end
 
   def save!
     g = Game.find(db_id)

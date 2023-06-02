@@ -1,0 +1,18 @@
+<%
+  _, cnames = @game.get_titles(player_idx)
+  p = @game.players[player_idx]
+%>
+
+<div class='player-div <%=cnames.join(' ')%>'>
+  <%= player_image(p) %>
+  <% if p.folded %>
+    <%= small_back_card %>
+    <%= small_back_card %>
+  <% else %>
+    <%= small_card(p.hole_card1) %>
+    <%= small_card(p.hole_card2) %>
+  <% end %>
+  <br/>
+  <%= render partial: 'player_deets_table',
+             locals: { player_idx: } %>
+</div>

@@ -18,7 +18,7 @@
   padding: 15px;
   border: solid 2px black;
   border-radius: 10%;
-  height: 220px;
+  height: 130px;
   width: 200px;
 }
 .current {
@@ -34,13 +34,23 @@
 }
 .game {
   margin: 0;
+/*  
   transform: scale(0.75);
   transform-origin: top left;
+*/
 }
 .game-home-link {
   font-size: larger;
   font-weight: bold;
   margin-right: 50px;
+}
+.game-current-player-column {
+  border-right: solid 1px black;
+  padding: 20px;
+}
+.game-stats-column {
+  border-left: solid 1px black;
+  padding: 20px;
 }
 .table {
   padding: 30px;
@@ -49,5 +59,7 @@
   border-radius: 10%;
 }
 .player-actions-list li {
+  /*
   display: inline-block;
+  */
 }

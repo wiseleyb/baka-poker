@@ -2,59 +2,49 @@
   cb = @game.current_bet + 10
   player = @game.current_player
 %>
-<tr>
-  <td>
-    <ul class='player-actions-list'>
-      <li class='game-home-link'>
-        <%=link_to "#{Poker::BAKA} Poker", games_path %>
-      </li>
-      <li>
-        <% if @game.cp_can_check? %>
-        <%= button_to 'Check',
-          player_action_game_path(@game.db_id, player_action: :check) %>
-        <% else %>
-          <i>Check</i>
-        <% end %>
-      </li>
-      <li>
-        <%= button_to 'Fold',
-          player_action_game_path(@game.db_id, player_action: :fold) %>
-      </li>
-      <li>
-        <% if @game.cp_can_bet? %>
-          <%= button_to "Bet #{fmt_money(cb)}",
-            player_action_game_path(@game.db_id, player_action: :bet, amount: cb) %>
-        <% else %>
-          <i>Bet</i>
-        <% end %>
-      </li>
-      <li>
-        <% if @game.cp_can_call? %>
-          <%= button_to "Call #{fmt_money(@game.cp_call_amt)}",
-            player_action_game_path(@game.db_id, player_action: :call) %>
-        <% else %>
-          <i>Call</i>
-        <% end %>
-      </li>
-      <li>
-        <%= button_to "Raise #{fmt_money(cb)}",
-          player_action_game_path(@game.db_id, player_action: :raise, amount: cb) %>
-      </li>
-      <li>
-        <%= button_to 'All In',
-          player_action_game_path(@game.db_id, player_action: :all_in) %>
-      </li>
-  </td>
-  <td>
-    <ul class='player-actions-list'>
-      <!--
-      <li>
-        <%=button_to 'Next Hand', next_hand_game_path(@game.db_id) %>
-      </li>
-      -->
-      <li>
-        <%=button_to 'Reset!', reset_games_path %>
-      </li>
-    </ul>
-  </td>
-</tr>
+<ul class='player-actions-list'>
+  <li>
+    <% if @game.cp_can_check? %>
+    <%= button_to 'Check',
+      player_action_game_path(@game.db_id, player_action: :check) %>
+    <% else %>
+      <i>Check</i>
+    <% end %>
+  </li>
+  <li>
+    <%= button_to 'Fold',
+      player_action_game_path(@game.db_id, player_action: :fold) %>
+  </li>
+  <li>
+    <% if @game.cp_can_bet? %>
+      <%= button_to "Bet #{fmt_money(cb)}",
+        player_action_game_path(@game.db_id, player_action: :bet, amount: cb) %>
+    <% else %>
+      <i>Bet</i>
+    <% end %>
+  </li>
+  <li>
+    <% if @game.cp_can_call? %>
+      <%= button_to "Call #{fmt_money(@game.cp_call_amt)}",
+        player_action_game_path(@game.db_id, player_action: :call) %>
+    <% else %>
+      <i>Call</i>
+    <% end %>
+  </li>
+  <li>
+    <%= button_to "Raise #{fmt_money(cb)}",
+      player_action_game_path(@game.db_id, player_action: :raise, amount: cb) %>
+  </li>
+  <li>
+    <%= button_to 'All In',
+      player_action_game_path(@game.db_id, player_action: :all_in) %>
+  </li>
+  <!--
+  <li>
+    <%=button_to 'Next Hand', next_hand_game_path(@game.db_id) %>
+  </li>
+  -->
+  <li>
+    <%=button_to 'Reset!', reset_games_path %>
+  </li>
+</ul>

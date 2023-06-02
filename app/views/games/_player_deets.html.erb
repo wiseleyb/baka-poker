@@ -1,27 +1,31 @@
+<%
+  titles, _ = @game.get_titles(player_idx)
+  p = @game.players[player_idx]
+%>
 <table>
   <tr valign="top">
     <td>
-      <%= player_image(player) %>
+      <%= player_image(p) %>
     </td>
     <td>
-      <%= titles %>
-      <%= player.name %>
-      <br/>Seat #<%=player.seat%>
-      <% if player.folded %>
+      <%= titles.join(' ') %>
+      <%= p.name %>
+      <br/>Seat #<%= p.seat %>
+      <% if p.folded %>
         <br/>
-        FOLDED: <%= show_txt_cards(player.hole_cards) %>
+        FOLDED: <%= show_txt_cards(p.hole_cards) %>
       <% else %>
-        <br/><%= fmt_money(player.stack) %>
-        <% unless (pbh = player_best_hand(player)).blank? %>
+        <br/><%= fmt_money(p.stack) %>
+        <% unless (pbh = player_best_hand(p)).blank? %>
           <br/><%= pbh %>
         <% end %>
-        <br/><%= player_hand_rank(player) %>
-        <% if player.last_action.present? %>
-          <br/><i><%=player.last_action%></i>
+        <br/><%= player_hand_rank(p) %>
+        <% if p.last_action.present? %>
+          <br/><i><%=p.last_action%></i>
         <% end %>
-        <% if player.current_bet %>
+        <% if p.current_bet %>
           <br/>
-          Bet: <%=fmt_money(player.current_bet)%>
+          Bet: <%=fmt_money(p.current_bet)%>
         <% end %>
       <% end %>
     </td>

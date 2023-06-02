@@ -1,0 +1,15 @@
+<%
+  titles, _ = @game.get_titles(player_idx)
+  p = @game.players[player_idx]
+%>
+<%= titles.join(' ') %>
+<%= p.name %>
+<% if p.folded %>
+  <br/>
+  FOLDED: <%= show_txt_cards(p.hole_cards) %>
+<% else %>
+  <br/><%= fmt_money(p.stack) %>
+  <% if p.last_action.present? %>
+    <br/><i><%=p.last_action%></i>
+  <% end %>
+<% end %>
