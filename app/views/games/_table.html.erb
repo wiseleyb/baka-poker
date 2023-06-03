@@ -18,12 +18,14 @@
         <br/>
         <b><%=@game.stage%></b>
         Pot: <%= fmt_money(@game.pot) %>
-        Current Bet: <%= fmt_money(@game.current_bet) %>
+        Call: <%= fmt_money(@game.cp_call_amt) %>
+        Min Raise: <%= fmt_money(@game.current_bet) %>
         <br/>
         <i><%= @game.last_player_action %></i>
 
         <br/>player_action_cnt: <%= @game.player_action_cnt %>
         <br/>player_total_action_cnt: <%= @game.player_total_action_cnt %>
+        <br/>player_all_in_cnt: <%= @game.player_all_in_cnt %>
       </div>
     </td>
     <td><%= player_table(2) %></td>

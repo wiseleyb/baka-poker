@@ -15,25 +15,33 @@ module Poker::GameActions
     if stage == 'Pre Flop'
       if cp_can_bet?
         (2..6).each do |mult|
-          bets["bet #{mult}x BB bet".to_sym] = { bet: current_bet * mult }
+          if current_player.stack >= current_bet * mult
+            bets["bet #{mult}x BB bet".to_sym] = { bet: current_bet * mult }
+          end
         end
       else
         (2..6).each do |mult|
-          bets["raise #{mult}x BB bet".to_sym] = { raise: current_bet * mult }
+          if current_player.stack >= current_bet * mult
+            bets["raise #{mult}x BB bet".to_sym] = { raise: current_bet * mult }
+          end
         end
       end
     else
       if cp_can_bet?
         (1..3).each do |mult|
-          k = "pot bet "
-          k = "#{k} x#{mult}" if mult > 1
-          bets[k.to_sym] = { bet: pot * mult }
+          if current_player.stack >= pot * mult
+            k = "pot bet "
+            k = "#{k} x#{mult}" if mult > 1
+            bets[k.to_sym] = { bet: pot * mult }
+          end
         end
       else
         (1..3).each do |mult|
-          k = "raise pot "
-          k = "#{k} x#{mult}" if mult > 1
-          bets[k.to_sym] = { raise: pot * mult }
+          if current_player.stack >= pot * mult
+            k = "raise pot "
+            k = "#{k} x#{mult}" if mult > 1
+            bets[k.to_sym] = { raise: pot * mult }
+          end
         end
       end
     end

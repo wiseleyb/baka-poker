@@ -9,7 +9,7 @@ module Poker::GamePlayers
   end
 
   def active_players
-    players.select {|p| !p.folded}
+    players.select {|p| !p.folded && !p.all_in?}
   end
 
   def next_player
@@ -17,11 +17,12 @@ module Poker::GamePlayers
       players[(current_player_idx + 1)..-1],
       players[0..current_player_idx]
     ].flatten
-    cp = cps.select {|p| !p.folded && !p.all_in?}.first
-    self.current_player_idx = players.index(cp)
-    players[current_player_idx]
     self.player_action_cnt ||= 0
     self.player_action_cnt += 1
+    cp = cps.select {|p| !p.folded && !p.all_in?}.first
+    return unless cp
+    self.current_player_idx = players.index(cp)
+    players[current_player_idx]
   end
 
   def small_blind_idx
@@ -57,7 +58,7 @@ module Poker::GamePlayers
   end
 
   def cp_can_call?
-    cp_call_amt > 0
+    cp_call_amt > 0 && cp_call_amt <= current_player.stack
   end
 
   def cp_call_amt
@@ -67,5 +68,9 @@ module Poker::GamePlayers
   # returns list of ranked players
   def rank_players
     Poker::HandRank.rank_players(self)
+  end
+
+  def player_all_in_cnt
+    players.select(&:all_in?).size
   end
 end

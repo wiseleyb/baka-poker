@@ -19,7 +19,7 @@
           player_action_game_path(@game.db_id, player_action: :call) %>
       <% else %>
         <%= button_to "#{n} #{fmt_money(v)} to #{fmt_money(v + @game.pot)}",
-          player_action_game_path(@game.db_id, player_action: :bet, amount: v) %>
+          player_action_game_path(@game.db_id, player_action: k, amount: v) %>
       <% end %>
     </li>
   <% end %>

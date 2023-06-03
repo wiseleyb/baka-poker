@@ -2,29 +2,38 @@
 module Poker::GameSteps
   # If betting round is over this moves to the next "stage" (turn/river/etc)
   def move_to_next_stage?
-    #if current_bet == 0 || (players.length - folded_players.length) == 1 || (player == last_to_bet && action == 'c')
-    if (current_bet == 0 || current_player.current_bet == current_bet) &&
-       player_action_cnt == player_total_action_cnt
+    unless player_action_cnt == player_total_action_cnt #- player_all_in_cnt
+      return false
+    end
+    if current_bet == 0 ||
+       current_player.current_bet == current_bet ||
+       active_players.size <= 1
       step_next_stage
       return true
+    else
+      step_reset_betting_round
     end
     false
   end
 
   def step_next_stage
-    case stage
-    when 'Post Blinds'
-      step_post_blinds
-    when 'Pre Flop'
-      step_flop
-    when 'Flop'
-      step_turn
-    when 'Turn'
-      step_river
-    when 'River'
-      step_showdown
-    when 'Showdown'
-      step_end_hand
+    if active_players.size <= 1
+     step_showdown
+    else
+      case stage
+      when 'Post Blinds'
+        step_post_blinds
+      when 'Pre Flop'
+        step_flop
+      when 'Flop'
+        step_turn
+      when 'Turn'
+        step_river
+      when 'River'
+        step_showdown
+      when 'Showdown'
+        step_end_hand
+      end
     end
     step_reset_betting_round
     save!
@@ -76,6 +85,12 @@ module Poker::GameSteps
   end
 
   def step_showdown
+    self.community_cards ||= []
+    # this step can be reached whenever there is one player left
+    # so fill out board
+    while community_cards.size < 5 do
+      self.community_cards << deck.draw
+    end
     self.stage = 'Showdown'
     log('')
     log('*** River ***')

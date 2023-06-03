@@ -126,6 +126,7 @@ class Poker::Game
              "stack:$#{p.stack}; "\
              "hole-cards:#{p.hole_cards.map(&:to_std).join(' ')}")
     end
+    pg.log('')
 
     pg.player_action_cnt = 0
     pg.player_total_action_cnt = pg.players.size

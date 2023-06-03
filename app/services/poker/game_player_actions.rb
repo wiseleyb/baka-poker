@@ -52,14 +52,20 @@ module Poker::GamePlayerActions
   end
 
   def action_bet_raise(amount, action_type)
-    if amount <= current_bet
+    if amount <= current_bet and amount < current_player.stack
       raise "Invalid #{action_type} amount of #{amount} (cb: #{current_bet})."
+    end
+    if amount > current_player.stack
+      amount = current_player.stack
+      action_type = 'all-in'
+    else
+      action_type = "#{action_type}s"
     end
     current_player.bet!(amount)
     self.pot += amount
     self.current_bet += amount
     self.last_player_idx_to_bet = current_player_idx
-    action_log("#{action_type}s  #{GameHelper.fmt_money(amount)} to "\
+    action_log("#{action_type} #{GameHelper.fmt_money(amount)} to "\
                "#{GameHelper.fmt_money(pot)}")
   end
 
@@ -68,7 +74,7 @@ module Poker::GamePlayerActions
     self.current_bet = amount - current_bet if amount > current_bet
     self.pot += amount
     current_player.bet!(amount)
-    action_log('all-in')
+    action_log("all-in #{GameHelper.fmt_money(amount)}")
   end
 
   def action_log(logmsg)
