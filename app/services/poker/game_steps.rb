@@ -1,5 +1,6 @@
 # Manages steps: post blinds, pre-flop, flop, etc
 module Poker::GameSteps
+  # If betting round is over this moves to the next "stage" (turn/river/etc)
   def move_to_next_stage?
     #if current_bet == 0 || (players.length - folded_players.length) == 1 || (player == last_to_bet && action == 'c')
     if (current_bet == 0 || current_player.current_bet == current_bet) &&

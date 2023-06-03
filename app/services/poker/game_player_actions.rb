@@ -52,7 +52,9 @@ module Poker::GamePlayerActions
   end
 
   def action_bet_raise(amount, action_type)
-    raise "Invalid #{action_type} amount." if amount <= current_bet
+    if amount <= current_bet
+      raise "Invalid #{action_type} amount of #{amount} (cb: #{current_bet})."
+    end
     current_player.bet!(amount)
     self.pot += amount
     self.current_bet += amount

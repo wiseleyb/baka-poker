@@ -3,42 +3,26 @@
   player = @game.current_player
 %>
 <ul class='player-actions-list'>
-  <li>
-    <% if @game.cp_can_check? %>
-    <%= button_to 'Check',
-      player_action_game_path(@game.db_id, player_action: :check) %>
-    <% else %>
-      <i>Check</i>
-    <% end %>
-  </li>
-  <li>
-    <%= button_to 'Fold',
-      player_action_game_path(@game.db_id, player_action: :fold) %>
-  </li>
-  <li>
-    <% if @game.cp_can_bet? %>
-      <%= button_to "Bet #{fmt_money(cb)}",
-        player_action_game_path(@game.db_id, player_action: :bet, amount: cb) %>
-    <% else %>
-      <i>Bet</i>
-    <% end %>
-  </li>
-  <li>
-    <% if @game.cp_can_call? %>
-      <%= button_to "Call #{fmt_money(@game.cp_call_amt)}",
-        player_action_game_path(@game.db_id, player_action: :call) %>
-    <% else %>
-      <i>Call</i>
-    <% end %>
-  </li>
-  <li>
-    <%= button_to "Raise #{fmt_money(cb)}",
-      player_action_game_path(@game.db_id, player_action: :raise, amount: cb) %>
-  </li>
-  <li>
-    <%= button_to 'All In',
-      player_action_game_path(@game.db_id, player_action: :all_in) %>
-  </li>
+  <% @game.cp_actions.each do |n, h| %>
+    <%
+      k = h.keys.first
+      v = h.values.first
+    %>
+    <li>
+      <% if v < 0 %>
+        <i><%= n %></i>
+      <% elsif v == 0 %>
+        <%= button_to n,
+          player_action_game_path(@game.db_id, player_action: k) %>
+      <% elsif k == :call %>
+        <%= button_to "#{n} #{fmt_money(v)} to #{fmt_money(v + @game.pot)}",
+          player_action_game_path(@game.db_id, player_action: :call) %>
+      <% else %>
+        <%= button_to "#{n} #{fmt_money(v)} to #{fmt_money(v + @game.pot)}",
+          player_action_game_path(@game.db_id, player_action: :bet, amount: v) %>
+      <% end %>
+    </li>
+  <% end %>
   <!--
   <li>
     <%=button_to 'Next Hand', next_hand_game_path(@game.db_id) %>

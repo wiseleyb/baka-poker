@@ -3,6 +3,7 @@ class Poker::Game
   include Poker::GamePlayers
   include Poker::GamePlayerActions
   include Poker::GameSteps
+  include Poker::GameActions
 
   attr_accessor :big_blind,
                 :community_cards,
@@ -84,6 +85,7 @@ class Poker::Game
     @stage = data[:stage]
   end
 
+  # Deals a new game
   def self.deal!(player_cnt = 6)
     g = Game.create
     pg = Poker::Game.new({}.to_json)
@@ -160,7 +162,7 @@ class Poker::Game
     false
   end
 
-  # figures out player titles and css names
+  # Figures out player titles and css names - mostly for UI
   # returns [titles, css_names] both arrays
   def get_titles(player_idx)
     titles = []
